@@ -10,63 +10,17 @@ interface AuthState {
   error: string | null;
   login: () => Promise<void>;
   logout: () => void;
-  setToken: (token: string) => void;
 }
 
 const TOKEN_STORAGE_KEY = "auth_token";
 const USER_STORAGE_KEY = "auth_user";
 
-// Helper to get initial state from localStorage
-const getInitialAuthState = () => {
-  console.log("[AUTH] 🔧 Initializing auth store...");
-  
-  if (typeof window === "undefined") {
-    console.log("[AUTH] ⚠️  Running on server (SSR), no token available");
-    return {
-      token: null,
-      userId: null,
-      email: null,
-      isAuthenticated: false,
-    };
-  }
-
-  try {
-    const storedToken = localStorage.getItem(TOKEN_STORAGE_KEY);
-    const storedUser = localStorage.getItem(USER_STORAGE_KEY);
-    
-    if (storedToken && storedUser) {
-      const user = JSON.parse(storedUser);
-      console.log("[AUTH] ✅ Token found in localStorage, restoring session:", {
-        userId: user.id,
-        email: user.email,
-      });
-      return {
-        token: storedToken,
-        userId: user.id,
-        email: user.email,
-        isAuthenticated: true,
-      };
-    } else {
-      console.log("[AUTH] ❌ No token found in localStorage");
-    }
-  } catch (error) {
-    console.log("[AUTH] ⚠️  Invalid data in localStorage, clearing:", error);
-    // Invalid stored data, clear it
-    localStorage.removeItem(TOKEN_STORAGE_KEY);
-    localStorage.removeItem(USER_STORAGE_KEY);
-  }
-
-  console.log("[AUTH] 🔓 Starting unauthenticated");
-  return {
-    token: null,
-    userId: null,
-    email: null,
-    isAuthenticated: false,
-  };
-};
-
 export const useAuthStore = create<AuthState>((set) => ({
-  ...getInitialAuthState(),
+  // Always start with unauthenticated state (fixes SSR hydration)
+  token: null,
+  userId: null,
+  email: null,
+  isAuthenticated: false,
   isLoading: false,
   error: null,
 
@@ -138,12 +92,5 @@ export const useAuthStore = create<AuthState>((set) => ({
       error: null,
     });
     console.log("[AUTH] ✅ Logout complete");
-  },
-
-  setToken: (token: string) => {
-    if (typeof window !== "undefined") {
-      localStorage.setItem(TOKEN_STORAGE_KEY, token);
-    }
-    set({ token, isAuthenticated: true });
   },
 }));

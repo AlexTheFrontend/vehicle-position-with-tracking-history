@@ -35,7 +35,6 @@ export interface VehicleApiResponse {
 }
 
 export interface GetVehiclesResponse {
-  success: boolean;
   data: {
     vehicles: VehicleApiResponse[];
     count: number;
@@ -87,7 +86,6 @@ export interface GetTrackHistoryParams {
 }
 
 export interface GetTrackHistoryResponse {
-  success: boolean;
   data: {
     vehicle_id: string;
     vehicle: {
