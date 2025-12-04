@@ -1,6 +1,6 @@
 import type { LoginRequest, LoginResponse } from "@/domain/types";
 
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL || "https://api-dev.carbn.nz";
+const API_BASE_URL = "https://api-dev.carbn.nz";
 
 class AuthService {
   private readonly baseUrl = API_BASE_URL;
@@ -27,6 +27,7 @@ class AuthService {
 
     const data = await response.json();
     console.log("[AUTH SERVICE] ✅ Login API call successful");
+    console.log("[AUTH SERVICE] 📦 Full response data:", JSON.stringify(data, null, 2));
     return data;
   }
 

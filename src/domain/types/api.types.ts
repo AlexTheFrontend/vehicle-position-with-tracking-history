@@ -5,12 +5,18 @@ export interface LoginRequest {
 }
 
 export interface LoginResponse {
-  success: boolean;
+  status: string;
   data: {
     token: string;
+    token_type: string;
+    expires_in: number;
+    refresh_token: string;
     user: {
       id: string;
       email: string;
+      first_name?: string;
+      last_name?: string;
+      role?: string;
     };
   };
 }

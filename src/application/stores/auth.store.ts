@@ -76,12 +76,15 @@ export const useAuthStore = create<AuthState>((set) => ({
     try {
       const response = await authService.loginWithHardcodedCredentials();
       console.log("[AUTH] 📡 Received response from API:", {
-        success: response.success,
+        status: response.status,
+        hasData: !!response.data,
         hasToken: !!response.data?.token,
         hasUser: !!response.data?.user,
+        tokenType: response.data?.token_type,
+        expiresIn: response.data?.expires_in,
       });
       
-      if (response.success) {
+      if (response.status === "success" && response.data?.token && response.data?.user) {
         const { token, user } = response.data;
         
         // Store in localStorage
@@ -102,9 +105,11 @@ export const useAuthStore = create<AuthState>((set) => ({
         console.log("[AUTH] ✅ Login successful! User:", {
           userId: user.id,
           email: user.email,
+          firstName: user.first_name,
+          lastName: user.last_name,
         });
       } else {
-        throw new Error("Login failed");
+        throw new Error(`Login failed: status=${response.status}`);
       }
     } catch (error) {
       const errorMessage = error instanceof Error ? error.message : "Login failed";
