@@ -50,6 +50,14 @@
   - Last update timestamp
 - Click the X button to deselect
 
+### Track History
+- When a vehicle is selected, its historical track is automatically displayed
+- Time range selector appears at the top center (1h, 6h, 24h, 7d)
+- Click different time ranges to see more or less history
+- The track line shows where the vehicle has been
+- **Live Extension**: As the vehicle moves, new positions are added to the track in real-time
+- Historical data + live WebSocket updates = continuous growing track
+
 ### Map Interaction
 - Pan and zoom the map to see different areas
 - When the map bounds change, vehicles are re-fetched for the new area
