@@ -20,7 +20,7 @@ export const VehicleDetailsPanel = ({
   };
 
   return (
-    <div className="absolute top-4 right-4 w-80 bg-white shadow-lg rounded-lg p-6 z-10">
+    <div className="absolute top-4 right-4 w-80 bg-white shadow-lg rounded-lg p-6 z-[1000]">
       <div className="flex justify-between items-start mb-4">
         <h2 className="text-xl font-semibold text-gray-900">
           {vehicle.name}
