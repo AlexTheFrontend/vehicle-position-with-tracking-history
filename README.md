@@ -10,6 +10,9 @@ A Next.js application for tracking vehicle positions with historical data and re
 - 🎨 Color-coded markers (ignition on/off)
 - 🧭 Directional arrows showing vehicle heading
 - 📊 Live connection status indicator
+- 📈 Track history with multiple time ranges (1h, 6h, 24h, 7d)
+- 🔴 Live track extension - historical track + real-time updates
+- 🔔 Toast notifications for errors
 
 ## Architecture
 
@@ -27,7 +30,8 @@ Built using Light DDD (Domain-Driven Design):
 - **Styling**: Tailwind CSS 4
 - **State Management**: Zustand
 - **Maps**: Google Maps (@googlemaps/js-api-loader)
-- **Real-time**: Socket.IO Client
+- **Real-time**: Native WebSocket API
+- **Notifications**: React Hot Toast
 - **Package Manager**: Yarn
 
 ## Getting Started
@@ -127,7 +131,8 @@ The app auto-authenticates with hardcoded credentials on load:
 
 1. **Login**: `POST /api/v1/auth/login`
 2. **Get Vehicles**: `GET /api/v1/fleet/vehicles/live`
-3. **WebSocket**: `ws://api-dev.carbn.nz/api/v1/fleet/live?token=<token>`
+3. **Get Track History**: `GET /api/v1/fleet/vehicles/:vehicle_id/track`
+4. **WebSocket**: `ws://api-dev.carbn.nz/api/v1/fleet/live?token=<token>`
 
 ### WebSocket Messages
 
@@ -149,11 +154,18 @@ Receive updates:
 }
 ```
 
-## Features to be Added
+## Future Enhancements
 
-- 📈 Track history visualization (pending API endpoint details)
+See `FUTURE_ENHANCEMENTS.md` for planned visual improvements to track history:
+- Gradient colors based on speed
+- Time markers at intervals
+- Start/end markers with special styling
+- Speed charts and playback controls
+
+Other features:
 - 🔍 Vehicle search and filtering
 - 🕐 Time-based playback of vehicle movements
+- 📱 Responsive mobile layout
 
 ## License
 

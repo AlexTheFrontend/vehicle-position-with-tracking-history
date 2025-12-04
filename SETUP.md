@@ -35,10 +35,12 @@
   - Selected vehicle has larger, blue-outlined marker
 
 ### Real-Time Updates
-- WebSocket connection is established after authentication
-- The app subscribes to all visible vehicles
+- Native WebSocket connection is established after authentication
+- Connects to: `ws://api-dev.carbn.nz/api/v1/fleet/live?token=<JWT>`
+- The app subscribes to all visible vehicles by sending JSON messages
 - Position updates are received in real-time and the map updates smoothly
 - Connection status is shown in the top-left corner
+- Auto-reconnects on disconnect (up to 5 attempts with exponential backoff)
 
 ### Vehicle Selection
 - Click any vehicle marker to select it
@@ -49,6 +51,14 @@
   - Current position coordinates
   - Last update timestamp
 - Click the X button to deselect
+
+### Track History
+- When a vehicle is selected, its historical track is automatically displayed
+- Time range selector appears at the top center (1h, 6h, 24h, 7d)
+- Click different time ranges to see more or less history
+- The track line shows where the vehicle has been
+- **Live Extension**: As the vehicle moves, new positions are added to the track in real-time
+- Historical data + live WebSocket updates = continuous growing track
 
 ### Map Interaction
 - Pan and zoom the map to see different areas
