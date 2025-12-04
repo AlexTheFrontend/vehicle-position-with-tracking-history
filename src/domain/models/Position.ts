@@ -10,69 +10,56 @@ export interface PositionUpdate extends Position {
   heading: number;
 }
 
-export class PositionModel {
-  constructor(
-    public readonly lat: number,
-    public readonly lng: number,
-    public readonly timestamp: string,
-  ) {}
+// Factory function to create position
+export const createPosition = (
+  lat: number,
+  lng: number,
+  timestamp: string,
+): Position => ({
+  lat,
+  lng,
+  timestamp,
+});
 
-  static fromApiResponse(data: {
-    lat: number;
-    lng: number;
-    timestamp: string;
-  }): PositionModel {
-    return new PositionModel(data.lat, data.lng, data.timestamp);
-  }
+// Factory function from API response
+export const createPositionFromApiResponse = (data: {
+  lat: number;
+  lng: number;
+  timestamp: string;
+}): Position => createPosition(data.lat, data.lng, data.timestamp);
 
-  toJson(): Position {
-    return {
-      lat: this.lat,
-      lng: this.lng,
-      timestamp: this.timestamp,
-    };
-  }
-}
+// Factory function to create position update
+export const createPositionUpdate = (
+  vehicleId: string,
+  lat: number,
+  lng: number,
+  speed: number,
+  heading: number,
+  timestamp: string,
+): PositionUpdate => ({
+  vehicleId,
+  lat,
+  lng,
+  speed,
+  heading,
+  timestamp,
+});
 
-export class PositionUpdateModel extends PositionModel {
-  constructor(
-    public readonly vehicleId: string,
-    lat: number,
-    lng: number,
-    public readonly speed: number,
-    public readonly heading: number,
-    timestamp: string,
-  ) {
-    super(lat, lng, timestamp);
-  }
-
-  static fromWebSocketMessage(data: {
-    vehicle_id: string;
-    lat: number;
-    lng: number;
-    speed: number;
-    heading: number;
-    timestamp: string;
-  }): PositionUpdateModel {
-    return new PositionUpdateModel(
-      data.vehicle_id,
-      data.lat,
-      data.lng,
-      data.speed,
-      data.heading,
-      data.timestamp,
-    );
-  }
-
-  toJson(): PositionUpdate {
-    return {
-      vehicleId: this.vehicleId,
-      lat: this.lat,
-      lng: this.lng,
-      speed: this.speed,
-      heading: this.heading,
-      timestamp: this.timestamp,
-    };
-  }
-}
+// Factory function from WebSocket message
+export const createPositionUpdateFromWebSocket = (data: {
+  vehicle_id: string;
+  lat: number;
+  lng: number;
+  speed: number;
+  heading: number;
+  timestamp: string;
+}): PositionUpdate =>
+  createPositionUpdate(
+    data.vehicle_id,
+    data.lat,
+    data.lng,
+    data.speed,
+    data.heading,
+    data.timestamp,
+  );
 
