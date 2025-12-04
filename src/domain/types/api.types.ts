@@ -63,7 +63,7 @@ export type WebSocketMessage =
   | WebSocketSubscribeMessage
   | WebSocketPositionUpdate;
 
-// Track History Types (placeholder for future endpoint)
+// Track History Types
 export interface TrackHistoryPoint {
   lat: number;
   lng: number;
@@ -72,11 +72,24 @@ export interface TrackHistoryPoint {
   timestamp: string;
 }
 
+export type TimeRange = "now-1h" | "now-6h" | "now-24h" | "now-7d";
+
+export interface GetTrackHistoryParams {
+  vehicleId: string;
+  from: TimeRange | string;
+  to?: string;
+}
+
 export interface GetTrackHistoryResponse {
   success: boolean;
   data: {
     vehicle_id: string;
+    vehicle: {
+      registration: string;
+      name: string;
+    };
     points: TrackHistoryPoint[];
+    point_count: number;
   };
 }
 
