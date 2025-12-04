@@ -30,7 +30,7 @@ Built using Light DDD (Domain-Driven Design):
 - **Styling**: Tailwind CSS 4
 - **State Management**: Zustand
 - **Maps**: Google Maps (@googlemaps/js-api-loader)
-- **Real-time**: Socket.IO Client
+- **Real-time**: Native WebSocket API
 - **Notifications**: React Hot Toast
 - **Package Manager**: Yarn
 

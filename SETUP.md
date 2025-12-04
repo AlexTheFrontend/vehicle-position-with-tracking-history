@@ -35,10 +35,12 @@
   - Selected vehicle has larger, blue-outlined marker
 
 ### Real-Time Updates
-- WebSocket connection is established after authentication
-- The app subscribes to all visible vehicles
+- Native WebSocket connection is established after authentication
+- Connects to: `ws://api-dev.carbn.nz/api/v1/fleet/live?token=<JWT>`
+- The app subscribes to all visible vehicles by sending JSON messages
 - Position updates are received in real-time and the map updates smoothly
 - Connection status is shown in the top-left corner
+- Auto-reconnects on disconnect (up to 5 attempts with exponential backoff)
 
 ### Vehicle Selection
 - Click any vehicle marker to select it
