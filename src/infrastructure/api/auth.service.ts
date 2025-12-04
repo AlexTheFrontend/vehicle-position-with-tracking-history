@@ -6,6 +6,11 @@ class AuthService {
   private readonly baseUrl = API_BASE_URL;
 
   async login(credentials: LoginRequest): Promise<LoginResponse> {
+    console.log("[AUTH SERVICE] 📤 Sending login request to API:", {
+      url: `${this.baseUrl}/api/v1/auth/login`,
+      email: credentials.email,
+    });
+
     const response = await fetch(`${this.baseUrl}/api/v1/auth/login`, {
       method: "POST",
       headers: {
@@ -14,14 +19,19 @@ class AuthService {
       body: JSON.stringify(credentials),
     });
 
+    console.log("[AUTH SERVICE] 📥 API response status:", response.status, response.statusText);
+
     if (!response.ok) {
       throw new Error(`Login failed: ${response.statusText}`);
     }
 
-    return response.json();
+    const data = await response.json();
+    console.log("[AUTH SERVICE] ✅ Login API call successful");
+    return data;
   }
 
   async loginWithHardcodedCredentials(): Promise<LoginResponse> {
+    console.log("[AUTH SERVICE] 🔑 Using hardcoded credentials for login");
     return this.login({
       email: "sasha@bfsnz.co.nz",
       password: "NewPass@1976",

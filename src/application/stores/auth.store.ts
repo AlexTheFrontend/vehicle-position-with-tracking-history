@@ -16,18 +16,70 @@ interface AuthState {
 const TOKEN_STORAGE_KEY = "auth_token";
 const USER_STORAGE_KEY = "auth_user";
 
+// Helper to get initial state from localStorage
+const getInitialAuthState = () => {
+  console.log("[AUTH] 🔧 Initializing auth store...");
+  
+  if (typeof window === "undefined") {
+    console.log("[AUTH] ⚠️  Running on server (SSR), no token available");
+    return {
+      token: null,
+      userId: null,
+      email: null,
+      isAuthenticated: false,
+    };
+  }
+
+  try {
+    const storedToken = localStorage.getItem(TOKEN_STORAGE_KEY);
+    const storedUser = localStorage.getItem(USER_STORAGE_KEY);
+    
+    if (storedToken && storedUser) {
+      const user = JSON.parse(storedUser);
+      console.log("[AUTH] ✅ Token found in localStorage, restoring session:", {
+        userId: user.id,
+        email: user.email,
+      });
+      return {
+        token: storedToken,
+        userId: user.id,
+        email: user.email,
+        isAuthenticated: true,
+      };
+    } else {
+      console.log("[AUTH] ❌ No token found in localStorage");
+    }
+  } catch (error) {
+    console.log("[AUTH] ⚠️  Invalid data in localStorage, clearing:", error);
+    // Invalid stored data, clear it
+    localStorage.removeItem(TOKEN_STORAGE_KEY);
+    localStorage.removeItem(USER_STORAGE_KEY);
+  }
+
+  console.log("[AUTH] 🔓 Starting unauthenticated");
+  return {
+    token: null,
+    userId: null,
+    email: null,
+    isAuthenticated: false,
+  };
+};
+
 export const useAuthStore = create<AuthState>((set) => ({
-  token: null,
-  userId: null,
-  email: null,
-  isAuthenticated: false,
+  ...getInitialAuthState(),
   isLoading: false,
   error: null,
 
   login: async () => {
+    console.log("[AUTH] 🔐 Starting login attempt with hardcoded credentials...");
     set({ isLoading: true, error: null });
     try {
       const response = await authService.loginWithHardcodedCredentials();
+      console.log("[AUTH] 📡 Received response from API:", {
+        success: response.success,
+        hasToken: !!response.data?.token,
+        hasUser: !!response.data?.user,
+      });
       
       if (response.success) {
         const { token, user } = response.data;
@@ -36,6 +88,7 @@ export const useAuthStore = create<AuthState>((set) => ({
         if (typeof window !== "undefined") {
           localStorage.setItem(TOKEN_STORAGE_KEY, token);
           localStorage.setItem(USER_STORAGE_KEY, JSON.stringify(user));
+          console.log("[AUTH] 💾 Token saved to localStorage");
         }
 
         set({
@@ -46,11 +99,16 @@ export const useAuthStore = create<AuthState>((set) => ({
           isLoading: false,
           error: null,
         });
+        console.log("[AUTH] ✅ Login successful! User:", {
+          userId: user.id,
+          email: user.email,
+        });
       } else {
         throw new Error("Login failed");
       }
     } catch (error) {
       const errorMessage = error instanceof Error ? error.message : "Login failed";
+      console.error("[AUTH] ❌ Login failed:", errorMessage);
       set({
         error: errorMessage,
         isLoading: false,
@@ -61,9 +119,11 @@ export const useAuthStore = create<AuthState>((set) => ({
   },
 
   logout: () => {
+    console.log("[AUTH] 🚪 Logging out...");
     if (typeof window !== "undefined") {
       localStorage.removeItem(TOKEN_STORAGE_KEY);
       localStorage.removeItem(USER_STORAGE_KEY);
+      console.log("[AUTH] 🗑️  Token removed from localStorage");
     }
     set({
       token: null,
@@ -72,6 +132,7 @@ export const useAuthStore = create<AuthState>((set) => ({
       isAuthenticated: false,
       error: null,
     });
+    console.log("[AUTH] ✅ Logout complete");
   },
 
   setToken: (token: string) => {
@@ -81,26 +142,3 @@ export const useAuthStore = create<AuthState>((set) => ({
     set({ token, isAuthenticated: true });
   },
 }));
-
-// Initialize from localStorage on client side
-if (typeof window !== "undefined") {
-  const storedToken = localStorage.getItem(TOKEN_STORAGE_KEY);
-  const storedUser = localStorage.getItem(USER_STORAGE_KEY);
-  
-  if (storedToken && storedUser) {
-    try {
-      const user = JSON.parse(storedUser);
-      useAuthStore.setState({
-        token: storedToken,
-        userId: user.id,
-        email: user.email,
-        isAuthenticated: true,
-      });
-    } catch {
-      // Invalid stored data, clear it
-      localStorage.removeItem(TOKEN_STORAGE_KEY);
-      localStorage.removeItem(USER_STORAGE_KEY);
-    }
-  }
-}
-
