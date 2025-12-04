@@ -13,7 +13,7 @@ export default function Home() {
   const { isAuthenticated, isLoading: authLoading, error: authError } = useAuth();
   const { vehicles, selectedVehicle, isLoading: vehiclesLoading, selectVehicle } = useVehicles();
   const { trackPoints, isLoading: trackLoading, timeRange, setTimeRange } = useTrackHistory();
-  
+
   // Subscribe to WebSocket updates for all visible vehicles
   const vehicleIds = vehicles.map((v) => v.id);
   const { isConnected } = useVehicleSocket(vehicleIds);
@@ -51,14 +51,13 @@ export default function Home() {
   return (
     <div className="relative w-screen h-screen">
       {/* <Toaster position="top-center" /> */}
-      
+
       {/* Status Bar */}
-      <div className="absolute top-4 left-4 z-10 bg-white shadow-lg rounded-lg px-4 py-2 flex items-center space-x-4">
+      <div className="absolute top-4 left-4 z-[1000] bg-white shadow-lg rounded-lg px-4 py-2 flex items-center space-x-4">
         <div className="flex items-center">
           <span
-            className={`inline-block w-3 h-3 rounded-full mr-2 ${
-              isConnected ? "bg-green-500" : "bg-red-500"
-            }`}
+            className={`inline-block w-3 h-3 rounded-full mr-2 ${isConnected ? "bg-green-500" : "bg-red-500"
+              }`}
           />
           <span className="text-sm font-medium">
             {isConnected ? "Live" : "Offline"}
@@ -74,7 +73,7 @@ export default function Home() {
 
       {/* Time Range Selector - shown when vehicle is selected */}
       {selectedVehicle && (
-        <div className="absolute top-4 left-1/2 transform -translate-x-1/2 z-10">
+        <div className="absolute top-4 left-1/2 transform -translate-x-1/2 z-[1000]">
           <TimeRangeSelector value={timeRange} onChange={setTimeRange} />
           {trackLoading && (
             <div className="text-center mt-2">
