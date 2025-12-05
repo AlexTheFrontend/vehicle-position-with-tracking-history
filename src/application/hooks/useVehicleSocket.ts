@@ -8,30 +8,25 @@ export const useVehicleSocket = (vehicleIds: string[]) => {
   const { updateVehiclePosition } = useVehicleStore();
 
   useEffect(() => {
-    if (!isAuthenticated || !token) {
-      return;
-    }
+    if (!isAuthenticated || !token) return;
 
-    // Connect to WebSocket
     vehicleSocketService.connect(token);
+    const stopListening = vehicleSocketService.onPositionUpdate(updateVehiclePosition);
 
-    // Subscribe to position updates
-    const unsubscribe = vehicleSocketService.onPositionUpdate((update) => {
-      updateVehiclePosition(update);
-    });
-
-    // Cleanup on unmount
     return () => {
-      unsubscribe();
+      stopListening();
+      vehicleSocketService.unsubscribe();
+      vehicleSocketService.disconnect();
     };
   }, [isAuthenticated, token, updateVehiclePosition]);
 
   useEffect(() => {
-    if (!isAuthenticated || vehicleIds.length === 0) {
+    if (!isAuthenticated) return;
+    if (vehicleIds.length === 0) {
+      vehicleSocketService.unsubscribe();
       return;
     }
 
-    // Subscribe to specific vehicles
     vehicleSocketService.subscribe(vehicleIds);
   }, [isAuthenticated, vehicleIds]);
 
