@@ -1,5 +1,7 @@
 # Vehicle Position with Tracking History
 
+(https://github.com/YOUR_USERNAME/vehicle-position-with-tracking-history/actions/workflows/test.yml/badge.svg)
+
 Next.js app that shows live vehicle positions with historical tracks, built with Leaflet + OpenStreetMap tiles and Zustand state.
 
 ## Features
@@ -79,6 +81,30 @@ yarn test
 ```bash
 yarn lint
 ```
+
+## CI/CD
+
+GitHub Actions workflow runs on push/PR to `main` and `develop` branches:
+
+1. **Lint** - ESLint with zero warnings tolerance
+2. **Tests** - Jest test suite
+
+See `.github/workflows/test.yml` for configuration.
+
+## Linting
+
+ESLint 9 (flat config) with TypeScript rules:
+
+| Rule | Description |
+|------|-------------|
+| `@typescript-eslint/no-unused-vars` | Error on unused variables (allows `_` prefix) |
+| `@typescript-eslint/no-explicit-any` | Warns on `any` usage |
+| `@typescript-eslint/consistent-type-imports` | Enforces `import type` syntax |
+| `@typescript-eslint/no-empty-object-type` | Prevents empty interfaces |
+| `@typescript-eslint/no-require-imports` | Prevents `require()` calls |
+| `prefer-const` | Enforces `const` over `let` when possible |
+
+Test files (`__tests__/**`, `*.test.ts(x)`) have relaxed rules for pragmatic testing.
 
 ## Project Structure
 
