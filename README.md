@@ -1,35 +1,33 @@
 # Vehicle Position with Tracking History
 
-A Next.js application for tracking vehicle positions with historical data and real-time updates.
+Next.js app that shows live vehicle positions with historical tracks, built with Leaflet + OpenStreetMap tiles and Zustand state.
 
 ## Features
 
-- 🗺️ Google Maps integration with vehicle markers
-- 🔴 Real-time vehicle position updates via WebSocket
-- 📍 Vehicle selection and detailed information panel
-- 🎨 Color-coded markers (ignition on/off)
-- 🧭 Directional arrows showing vehicle heading
-- 📊 Live connection status indicator
-- 📈 Track history with multiple time ranges (1h, 6h, 24h, 7d)
-- 🔴 Live track extension - historical track + real-time updates
-- 🔔 Toast notifications for errors
+- 🗺️ Leaflet map with OSM tiles and custom vehicle markers
+- 🔴 Real-time position updates via WebSocket (with reconnect + resubscribe)
+- 📍 Vehicle selection with details panel (ignition, speed, heading, coords)
+- 🧭 Directional arrow markers; ignition-aware coloring
+- 📈 Track history with time ranges (1h, 6h, 24h, 7d) plus live extension
+- 🔔 Toast errors for track history failures
+- 🟢 Live/offline indicator + vehicle count badge
 
-## Architecture
+## Architecture (light DDD)
 
-Built using Light DDD (Domain-Driven Design):
+- **Domain**: `src/domain` models and API/WebSocket types.
+- **Infrastructure**: `src/infrastructure/api/*` REST clients, `websocket/vehicle-socket.service.ts`.
+- **Application**: Zustand stores (`auth.store.ts`, `vehicle.store.ts`, `map.store.ts`) and hooks (`useAuth`, `useVehicles`, `useTrackHistory`, `useVehicleSocket`).
+- **Presentation**: Components under `src/presentation/components`, page in `app/page.tsx`.
 
-- **Domain Layer**: Models, types, interfaces
-- **Infrastructure Layer**: API clients, WebSocket service
-- **Application Layer**: Business logic, state management (Zustand)
-- **Presentation Layer**: React components, pages
+Data flow: on load `useAuth` auto-logins with hardcoded creds -> `useVehicles` fetches visible vehicles for current map bounds -> `useVehicleSocket` streams live position updates into the vehicle store -> `useTrackHistory` fetches history for the selected vehicle and appends live points -> map + details render from store state.
 
 ## Tech Stack
 
 - **Framework**: Next.js 16 (React 19)
 - **Language**: TypeScript
-- **Styling**: Tailwind CSS 4
-- **State Management**: Zustand
-- **Maps**: Google Maps (@googlemaps/js-api-loader)
+- **Styling**: Tailwind CSS (v4, via `@tailwindcss/postcss`)
+- **State**: Zustand
+- **Maps**: Leaflet + React Leaflet with OSM tiles
 - **Real-time**: Native WebSocket API
 - **Notifications**: React Hot Toast
 - **Package Manager**: Yarn
@@ -38,110 +36,81 @@ Built using Light DDD (Domain-Driven Design):
 
 ### Prerequisites
 
-- Node.js 20+
-- Yarn package manager
-- Google Maps API key
+- Node.js 22.x (see `engines` in `package.json`)
+- Yarn
 
 ### Installation
-
-1. Clone the repository
-2. Install dependencies:
 
 ```bash
 yarn install
 ```
 
-3. Create `.env.local` file:
+### Configuration
 
-```bash
-cp .env.example .env.local
-```
+No `.env` needed today. API base and credentials are hardcoded:
+- `src/infrastructure/api/auth.service.ts` — login uses `sasha@bfsnz.co.nz` / `NewPass@1976`
+- `src/infrastructure/api/fleet.service.ts` — `API_BASE_URL = https://api-dev.carbn.nz`
 
-4. Add your Google Maps API key to `.env.local`:
-
-```
-NEXT_PUBLIC_GOOGLE_MAPS_API_KEY=your_actual_api_key
-NEXT_PUBLIC_API_BASE_URL=https://api-dev.carbn.nz
-```
+Change those if you need different environments or credentials.
 
 ### Development
-
-Run the development server:
 
 ```bash
 yarn dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000)
+Open http://localhost:3000
 
-### Build
+### Build & Run
 
 ```bash
 yarn build
 yarn start
 ```
 
+### Lint
+
+```bash
+yarn lint
+```
+
 ## Project Structure
 
 ```
-├── app/                          # Next.js app directory
-│   ├── page.tsx                  # Main page
-│   ├── layout.tsx                # Root layout
-│   └── globals.css               # Global styles
+├── app/
+│   ├── layout.tsx
+│   ├── page.tsx
+│   └── globals.css
 ├── src/
-│   ├── domain/                   # Domain layer
-│   │   ├── models/               # Domain models
-│   │   │   ├── Vehicle.ts
-│   │   │   └── Position.ts
-│   │   └── types/                # Type definitions
-│   │       └── api.types.ts
-│   ├── infrastructure/           # Infrastructure layer
-│   │   ├── api/                  # API services
-│   │   │   ├── auth.service.ts
-│   │   │   └── fleet.service.ts
-│   │   └── websocket/            # WebSocket service
-│   │       └── vehicle-socket.service.ts
-│   ├── application/              # Application layer
-│   │   ├── stores/               # Zustand stores
-│   │   │   ├── auth.store.ts
-│   │   │   ├── vehicle.store.ts
-│   │   │   └── map.store.ts
-│   │   └── hooks/                # Custom hooks
-│   │       ├── useAuth.ts
-│   │       ├── useVehicles.ts
-│   │       └── useVehicleSocket.ts
-│   └── presentation/             # Presentation layer
-│       └── components/           # React components
-│           ├── Map/
-│           │   ├── VehicleMap.tsx
-│           │   └── TrackHistory.tsx
-│           └── VehicleDetails/
-│               └── VehicleDetailsPanel.tsx
+│   ├── domain/
+│   │   ├── models/ (Vehicle, Position factories)
+│   │   └── types/ (api + websocket contracts)
+│   ├── infrastructure/
+│   │   ├── api/ (auth, fleet REST clients)
+│   │   └── websocket/ (vehicle-socket.service.ts)
+│   ├── application/
+│   │   ├── stores/ (auth, vehicle, map Zustand stores)
+│   │   └── hooks/ (auth, vehicles, track history, socket)
+│   └── presentation/
+│       └── components/
+│           ├── Map/ (VehicleMap, VehicleMapInner, TimeRangeSelector)
+│           └── VehicleDetails/ (VehicleDetailsPanel)
 ```
 
-## API Integration
+## API & WebSocket
 
-### Authentication
+- **Base**: `https://api-dev.carbn.nz`
+- **Login**: `POST /api/v1/auth/login` (hardcoded creds in `auth.service.ts`)
+- **Vehicles (live)**: `GET /api/v1/fleet/vehicles/live?swLat&swLng&neLat&neLng` (auth bearer token)
+- **Track history**: `GET /api/v1/fleet/vehicles/:vehicleId/track?from=now-24h&to=...`
+- **WebSocket**: `wss://api-dev.carbn.nz/api/v1/fleet/live?token=<token>`
 
-The app auto-authenticates with hardcoded credentials on load:
-- Email: `sasha@bfsnz.co.nz`
-- Password: `NewPass@1976`
-
-### Endpoints
-
-1. **Login**: `POST /api/v1/auth/login`
-2. **Get Vehicles**: `GET /api/v1/fleet/vehicles/live`
-3. **Get Track History**: `GET /api/v1/fleet/vehicles/:vehicle_id/track`
-4. **WebSocket**: `ws://api-dev.carbn.nz/api/v1/fleet/live?token=<token>`
-
-### WebSocket Messages
-
-Subscribe to vehicles:
+Subscribe:
 ```json
 {"action": "subscribe", "vehicle_ids": ["uuid1", "uuid2"]}
 ```
 
-Receive updates:
+Position update:
 ```json
 {
   "type": "position_update",
@@ -154,18 +123,13 @@ Receive updates:
 }
 ```
 
-## Future Enhancements
+## Possible simplifications (not yet applied)
 
-See `FUTURE_ENHANCEMENTS.md` for planned visual improvements to track history:
-- Gradient colors based on speed
-- Time markers at intervals
-- Start/end markers with special styling
-- Speed charts and playback controls
-
-Other features:
-- 🔍 Vehicle search and filtering
-- 🕐 Time-based playback of vehicle movements
-- 📱 Responsive mobile layout
+- Trim console noise in `useAuth` and websocket service for cleaner prod logs.
+- Centralize `API_BASE_URL` and hardcoded creds into a single config file to swap environments quickly.
+- Debounce/queue map move-triggered fetches in `useVehicles` to avoid rapid refetch on small pans.
+- Add basic WebSocket lifecycle UI (connecting/retrying states) near the status badge for visibility.
+- Memoize `VehicleMapInner` marker icons if perf becomes an issue with many vehicles.
 
 ## License
 
