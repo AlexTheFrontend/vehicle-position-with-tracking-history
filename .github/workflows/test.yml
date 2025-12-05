@@ -33,4 +33,4 @@ jobs:
         run: yarn lint
 
       - name: Run tests
-        run: yarn test --watch=false --runInBand
+        run: yarn test
