@@ -47,9 +47,9 @@ yarn install
 
 ### Configuration
 
-No `.env` needed today. API base and credentials are hardcoded:
-- `src/infrastructure/api/auth.service.ts` — login uses `sasha@bfsnz.co.nz` / `NewPass@1976`
-- `src/infrastructure/api/fleet.service.ts` — `API_BASE_URL = https://api-dev.carbn.nz`
+No `.env` needed today. API base and default login creds live in `src/infrastructure/api/config.ts`:
+- `API_BASE_URL = https://api-dev.carbn.nz`
+- `DEFAULT_AUTH_CREDENTIALS = { email: "sasha@bfsnz.co.nz", password: "NewPass@1976" }`
 
 Change those if you need different environments or credentials.
 

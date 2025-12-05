@@ -1,6 +1,5 @@
 import type { LoginRequest, LoginResponse } from "@/domain/types";
-
-const API_BASE_URL = "https://api-dev.carbn.nz";
+import { API_BASE_URL, DEFAULT_AUTH_CREDENTIALS } from "./config";
 
 const login = async (credentials: LoginRequest): Promise<LoginResponse> => {
   console.log("[AUTH SERVICE] 📤 Sending login request to API:", {
@@ -30,10 +29,7 @@ const login = async (credentials: LoginRequest): Promise<LoginResponse> => {
 
 const loginWithHardcodedCredentials = async (): Promise<LoginResponse> => {
   console.log("[AUTH SERVICE] 🔑 Using hardcoded credentials for login");
-  return login({
-    email: "sasha@bfsnz.co.nz",
-    password: "NewPass@1976",
-  });
+  return login(DEFAULT_AUTH_CREDENTIALS);
 };
 
 export const authService = {

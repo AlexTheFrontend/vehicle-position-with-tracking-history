@@ -6,8 +6,7 @@ import type {
   TrackHistoryPoint,
 } from "@/domain/types";
 import { createVehicleFromApiResponse } from "@/domain/models";
-
-const API_BASE_URL = "https://api-dev.carbn.nz";
+import { API_BASE_URL } from "./config";
 
 const getVehicles = async (bounds: MapBounds, token: string) => {
   const params = new URLSearchParams({

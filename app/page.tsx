@@ -1,3 +1,5 @@
+//"use client" tells Next.js (App Router) to treat the file as a client component. 
+// Without it, files in app/ default to server components.
 "use client";
 
 import { useAuth } from "@/application/hooks/useAuth";
