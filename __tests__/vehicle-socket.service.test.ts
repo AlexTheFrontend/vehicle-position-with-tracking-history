@@ -1,5 +1,5 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import type { PositionUpdate } from "@/domain/models";
+import type { VehicleSocketService } from "@/infrastructure/websocket/vehicle-socket.service";
 
 class MockWebSocket {
   static OPEN = 1;
@@ -30,13 +30,12 @@ class MockWebSocket {
 }
 
 describe("vehicle-socket.service", () => {
-  let vehicleSocketService: typeof import("@/infrastructure/websocket/vehicle-socket.service").vehicleSocketService;
+  let vehicleSocketService: VehicleSocketService;
 
   beforeEach(() => {
     jest.resetModules();
     MockWebSocket.instances = [];
     (global as any).WebSocket = MockWebSocket as any;
-    // eslint-disable-next-line @typescript-eslint/no-var-requires
     vehicleSocketService = require("@/infrastructure/websocket/vehicle-socket.service").vehicleSocketService;
   });
 
