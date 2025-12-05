@@ -168,3 +168,5 @@ export const vehicleSocketService = {
   isConnected,
 };
 
+export type VehicleSocketService = typeof vehicleSocketService;
+

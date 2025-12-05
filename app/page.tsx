@@ -1,6 +1,7 @@
+//"use client" tells Next.js (App Router) to treat the file as a client component. 
+// Without it, files in app/ default to server components.
 "use client";
 
-import { Toaster } from "react-hot-toast";
 import { useAuth } from "@/application/hooks/useAuth";
 import { useVehicles } from "@/application/hooks/useVehicles";
 import { useVehicleSocket } from "@/application/hooks/useVehicleSocket";
@@ -50,8 +51,6 @@ export default function Home() {
 
   return (
     <div className="relative w-screen h-screen">
-      {/* <Toaster position="top-center" /> */}
-
       {/* Status Bar */}
       <div className="absolute top-4 left-4 z-[1000] bg-white shadow-lg rounded-lg px-4 py-2 flex items-center space-x-4">
         <div className="flex items-center">
