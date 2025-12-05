@@ -68,6 +68,12 @@ yarn build
 yarn start
 ```
 
+### Tests
+
+```bash
+yarn test
+```
+
 ### Lint
 
 ```bash
