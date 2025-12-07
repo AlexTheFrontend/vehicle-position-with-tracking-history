@@ -63,7 +63,7 @@ yarn dev
 
 Open http://localhost:3000
 
-### Build & Run
+### Build & Run (Not necessary)
 
 ```bash
 yarn build
@@ -158,11 +158,8 @@ Position update:
 ## Possible simplifications (not yet applied)
 
 - Trim console noise in `useAuth` and websocket service for cleaner prod logs.
+- Implement a login form.
 - Centralize `API_BASE_URL` and hardcoded creds into a single config file to swap environments quickly.
 - Debounce/queue map move-triggered fetches in `useVehicles` to avoid rapid refetch on small pans.
 - Add basic WebSocket lifecycle UI (connecting/retrying states) near the status badge for visibility.
 - Memoize `VehicleMapInner` marker icons if perf becomes an issue with many vehicles.
-
-## License
-
-Proprietary
